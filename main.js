@@ -129,18 +129,9 @@ function drawImageProp(ctx, img, x, y, w, h, offsetX, offsetY) {
       nh = ih * r,
       cx, cy, cw, ch, ar = 1;
 
-  // decide which gap to fill based on orientation
-  const isPortrait = w < h;
-  
-  if (isPortrait) {
-    // Mobile/Portrait: Fit width perfectly (like object-fit: contain) so it stays sharp.
-    // The background is black, so cinematic top/bottom black bars will blend perfectly.
-    ar = w / nw;
-  } else {
-    // Desktop/Landscape: object-fit: cover
-    if (nw < w) ar = w / nw;
-    if (Math.abs(ar - 1) < 1e-14 && nh < h) ar = h / nh;
-  }
+  // decide which gap to fill (object-fit: cover)
+  if (nw < w) ar = w / nw;
+  if (Math.abs(ar - 1) < 1e-14 && nh < h) ar = h / nh;
   
   nw *= ar;
   nh *= ar;
@@ -184,7 +175,11 @@ function renderFrame() {
     
     // Only redraw if we found a valid frame, and it's different from the one currently on screen
     if (found && (targetIndex !== currentRenderedFrame || canvas.width !== expectedWidth)) {
-      drawImageProp(ctx, images[targetIndex]);
+      // Offset Y: 0.5 (center) for desktop, 0.1 (top) for mobile to keep the robot's head in frame
+      const isMobile = window.innerWidth < 768;
+      const offsetY = isMobile ? 0.1 : 0.5;
+      
+      drawImageProp(ctx, images[targetIndex], 0, 0, canvas.width, canvas.height, 0.5, offsetY);
       currentRenderedFrame = targetIndex;
     }
   }

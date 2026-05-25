@@ -508,17 +508,34 @@ body {
     width: 100%;
   }
 
-  /* Make hero text perfectly centered and readable */
-  .hero-text {
-    align-items: center;
-    text-align: center;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 90%;
+  /* Move hero text to the bottom and center it so it doesn't block the robot's face */
+  #hero-title {
+    align-items: center !important;
+    text-align: center !important;
+    justify-content: flex-end !important;
+    padding-bottom: 15vh !important;
+    width: 100%;
+    left: 0;
   }
   
-  .hero-title {
-    font-size: clamp(2.5rem, 10vw, 4rem);
+  #hero-title h1 {
+    font-size: clamp(2.5rem, 10vw, 3.5rem) !important;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+  }
+  
+  #hero-title p {
+    text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+  }
+
+  /* Center the about text as well */
+  #about-text {
+    align-items: center !important;
+    text-align: center !important;
+    padding: 0 20px !important;
+    width: 100%;
+    left: 0;
+    justify-content: flex-end !important;
+    padding-bottom: 5vh !important;
   }
 
   /* Optimize Contact section for touch */
