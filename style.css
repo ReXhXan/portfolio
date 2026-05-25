@@ -1,0 +1,546 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&display=swap');
+
+:root {
+  --bg-color: #050505;
+  --text-primary: #ffffff;
+  --text-secondary: #a0a0a0;
+  --accent-color: #00f0ff;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  overflow-x: hidden;
+}
+
+/* Preloader */
+#preloader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: #000;
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: opacity 0.5s ease;
+}
+
+.loader-content {
+  text-align: center;
+  width: 80%;
+  max-width: 400px;
+}
+
+.loader-content h2 {
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+  font-weight: 300;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.progress-bar-container {
+  width: 100%;
+  height: 4px;
+  background-color: #333;
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 15px;
+}
+
+#progress-bar {
+  width: 0%;
+  height: 100%;
+  background-color: var(--accent-color);
+  box-shadow: 0 0 10px var(--accent-color);
+  transition: width 0.1s linear;
+}
+
+#progress-text {
+  font-size: 1rem;
+  color: var(--text-secondary);
+}
+
+/* Scroll Wrapper */
+.scroll-wrapper {
+  position: relative;
+  width: 100%;
+  height: 800vh; /* Reverted to 800vh */
+}
+
+/* Sticky Canvas */
+#hero-canvas {
+  position: sticky;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  object-fit: cover;
+  display: block;
+  z-index: 1;
+  transform: scale(1.05); /* Slightly scale up to crop out the Veo watermark at the edges */
+}
+
+/* Overlays */
+.overlay-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none; /* Let clicks pass through */
+  z-index: 2;
+}
+
+.overlay-element {
+  position: sticky; /* Keep it sticky relative to the viewport while inside the wrapper */
+  top: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 5vw;
+}
+
+#hero-title {
+  align-items: flex-start;
+}
+
+#hero-title h1 {
+  font-size: clamp(3rem, 8vw, 6rem);
+  font-weight: 700;
+  line-height: 1.1;
+  background: linear-gradient(135deg, #fff, #888);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 1rem;
+  filter: drop-shadow(0 4px 10px rgba(0,0,0,0.5));
+}
+
+#hero-title p {
+  font-size: 1.2rem;
+  color: var(--text-secondary);
+  font-weight: 300;
+  max-width: 500px;
+}
+
+.left-aligned {
+  align-items: flex-start;
+  text-align: left;
+  opacity: 0; /* Hidden initially, controlled by GSAP */
+  padding-left: 5vw;
+}
+
+.right-aligned {
+  align-items: flex-end;
+  text-align: right;
+  opacity: 0; /* Hidden initially, controlled by GSAP */
+}
+
+.center-aligned {
+  align-items: center;
+  text-align: center;
+  opacity: 0; /* Hidden initially, controlled by GSAP */
+}
+
+#about-text .expertise-heading {
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: var(--accent-color);
+  text-shadow: 0 0 20px rgba(0, 240, 255, 0.4);
+}
+
+.skills-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  max-width: 380px; /* Restrict width so it doesn't overlap the center cube */
+  margin-top: 10px;
+}
+
+.glowing-box {
+  background: rgba(5, 5, 10, 0.7);
+  border: 1px solid rgba(0, 240, 255, 0.2);
+  border-radius: 12px;
+  padding: 20px;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 0 15px rgba(0, 240, 255, 0.05), inset 0 0 20px rgba(0, 240, 255, 0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  text-align: left;
+}
+
+.glowing-box:hover {
+  transform: translateY(-5px);
+  border-color: rgba(0, 240, 255, 0.8);
+  box-shadow: 0 0 30px rgba(0, 240, 255, 0.3), inset 0 0 20px rgba(0, 240, 255, 0.1);
+}
+
+.glowing-box h3 {
+  font-size: 1.1rem;
+  color: var(--accent-color);
+  margin-bottom: 8px;
+  font-weight: 700;
+  text-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+  letter-spacing: 0.5px;
+}
+
+#about-text .glowing-box p {
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  font-weight: 300;
+  line-height: 1.5;
+  background: none;
+  padding: 0;
+  border: none;
+  backdrop-filter: none;
+  box-shadow: none;
+}
+
+/* Watermark Hider to explicitly block the Veo text at the bottom right */
+.watermark-hider {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  width: 150px;
+  height: 60px;
+  background-color: #050505;
+  z-index: 9000;
+  filter: blur(10px);
+  transform: translate(20px, 20px);
+}
+/* ==============================
+   TIMELINE (ROADMAP) STYLES
+============================== */
+.timeline-container {
+  position: relative;
+  max-width: 420px;
+  margin-top: 20px;
+  padding-left: 35px; /* Space for the vertical line and dots */
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  text-align: left; /* Ensure text flows normally inside */
+}
+
+/* Dynamic S-Curve Timeline lines connecting the dots perfectly */
+.timeline-container::before {
+  display: none; /* Hide the old straight repeating line */
+}
+
+.timeline-item {
+  position: relative;
+}
+
+/* Segment for odd items (Left to Right Curve) */
+.timeline-item:nth-child(odd)::before {
+  content: '';
+  position: absolute;
+  top: 22px; 
+  left: -30px; 
+  width: 50px;
+  height: calc(100% + 25px); 
+  background-image: url('data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiB2aWV3Qm94PSIwIDAgNTAgMTAwIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik0gNSwwIEMgNSw1MCA0NSw1MCA0NSwxMDAiIHN0cm9rZT0iIzAwZjBmZiIgc3Ryb2tlLXdpZHRoPSIzIiBmaWxsPSJub25lIiBzdHJva2UtbGluZWNhcD0icm91bmQiIG9wYWNpdHk9IjAuNiIgdmVjdG9yLWVmZmVjdD0ibm9uLXNjYWxpbmctc3Ryb2tlIi8+PC9zdmc+');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  z-index: 1;
+  filter: drop-shadow(0 0 8px rgba(0,240,255,0.7));
+}
+
+/* Stagger even items to create the zigzag roadmap effect */
+.timeline-item:nth-child(even) {
+  transform: translateX(40px);
+}
+
+/* Segment for even items (Right to Left Curve) */
+.timeline-item:nth-child(even)::before {
+  content: '';
+  position: absolute;
+  top: 22px;
+  left: -70px;
+  width: 50px;
+  height: calc(100% + 25px);
+  background-image: url('data:image/svg+xml;base64,PHN2ZyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIiB2aWV3Qm94PSIwIDAgNTAgMTAwIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik0gNDUsMCBDIDQ1LDUwIDUsNTAgNSwxMDAiIHN0cm9rZT0iIzAwZjBmZiIgc3Ryb2tlLXdpZHRoPSIzIiBmaWxsPSJub25lIiBzdHJva2UtbGluZWNhcD0icm91bmQiIG9wYWNpdHk9IjAuNiIgdmVjdG9yLWVmZmVjdD0ibm9uLXNjYWxpbmctc3Ryb2tlIi8+PC9zdmc+');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  z-index: 1;
+  filter: drop-shadow(0 0 8px rgba(0,240,255,0.7));
+}
+
+/* Hide the line on the very last item because there is no next dot to connect to */
+.timeline-item:last-child::before {
+  display: none;
+}
+
+/* The glowing dot on the timeline */
+.timeline-dot {
+  position: absolute;
+  left: -32px; /* Position perfectly over the vertical line */
+  top: 15px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--accent-color);
+  box-shadow: 0 0 10px var(--accent-color), 0 0 20px var(--accent-color);
+  z-index: 2;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.timeline-item:hover .timeline-dot {
+  transform: scale(1.5);
+  box-shadow: 0 0 20px var(--accent-color), 0 0 40px var(--accent-color);
+}
+
+/* Override glowing-box margins when inside timeline */
+.timeline-content.glowing-box {
+  margin: 0;
+  padding: 15px 20px;
+}
+
+/* ==============================
+   INTERACTIVE & ANIMATION STYLES
+============================== */
+
+/* 2. 3D Hover Effects for Glowing Boxes */
+.glowing-box {
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease, border-color 0.4s ease;
+}
+
+.glowing-box:hover {
+  transform: translateY(-5px) scale(1.03);
+  border-color: rgba(0, 240, 255, 0.6);
+  box-shadow: 0 0 25px rgba(0, 240, 255, 0.3), inset 0 0 15px rgba(0, 240, 255, 0.2);
+  z-index: 10;
+}
+
+/* 3. Classy Text Styling */
+.classy-text {
+  background: linear-gradient(90deg, #ffffff, #00f0ff, #ffffff);
+  background-size: 200% auto;
+  color: transparent;
+  -webkit-background-clip: text;
+  background-clip: text;
+  animation: shine 4s linear infinite;
+  letter-spacing: 4px;
+}
+
+@keyframes shine {
+  to {
+    background-position: 200% center;
+  }
+}
+
+/* 4. Scroll Reveal Animations */
+.reveal-on-scroll {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.8s cubic-bezier(0.165, 0.84, 0.44, 1), transform 0.8s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.reveal-on-scroll.is-visible {
+  opacity: 1;
+  transform: translateY(0); /* For odd items */
+}
+
+.timeline-item.reveal-on-scroll.is-visible:nth-child(even) {
+  transform: translateX(40px) translateY(0); /* Preserve the stagger for even items */
+}
+
+/* ==============================
+   FOOTER & CONTACT SECTION
+============================== */
+#contact {
+  position: relative;
+  height: auto;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 80px 5vw;
+  background: linear-gradient(-45deg, #160429, #050505, #0a1128, #11051e);
+  background-size: 400% 400%;
+  animation: cosmicGradient 15s ease infinite;
+  overflow: hidden;
+}
+
+@keyframes cosmicGradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Floating aesthetic orbs behind the contact section */
+#contact::before, #contact::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(100px);
+  z-index: 0;
+  pointer-events: none;
+  animation: floatOrb 10s ease-in-out infinite alternate;
+}
+
+#contact::before {
+  width: 400px;
+  height: 400px;
+  background: rgba(138, 43, 226, 0.15); /* Neon Purple */
+  top: -100px;
+  left: -100px;
+}
+
+#contact::after {
+  width: 500px;
+  height: 500px;
+  background: rgba(0, 240, 255, 0.1); /* Neon Cyan */
+  bottom: -150px;
+  right: -150px;
+  animation-delay: -5s;
+}
+
+@keyframes floatOrb {
+  0% { transform: translateY(0px) scale(1); }
+  100% { transform: translateY(50px) scale(1.1); }
+}
+
+#contact > * {
+  z-index: 1; /* Keep content above orbs */
+}
+
+.contact-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  width: 100%;
+  max-width: 800px;
+  margin: 40px auto;
+}
+
+.contact-grid:hover .contact-btn:not(:hover) {
+  opacity: 0.5;
+  filter: blur(2px);
+  transform: scale(0.95);
+}
+
+.contact-grid:hover .contact-btn:not(:hover)::before {
+  opacity: 0.2;
+  animation-play-state: paused;
+}
+
+.contact-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  padding: 20px 30px;
+  text-decoration: none;
+  color: white;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border-radius: 12px;
+  white-space: nowrap;
+  background: rgba(20, 5, 40, 0.4);
+  backdrop-filter: blur(10px);
+  overflow: hidden; /* Contains the spinning laser */
+  z-index: 1;
+  box-shadow: 0 0 20px rgba(170, 0, 255, 0.2);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* The spinning laser light */
+.contact-btn::before {
+  content: '';
+  position: absolute;
+  top: -100%;
+  left: -100%;
+  width: 300%;
+  height: 300%;
+  background: conic-gradient(
+    transparent, 
+    rgba(170, 0, 255, 1) 90deg, 
+    transparent 180deg, 
+    rgba(0, 240, 255, 1) 270deg, 
+    transparent 360deg
+  );
+  animation: rotateLaser 4s linear infinite;
+  z-index: -2;
+}
+
+/* The dark center of the box to carve out the border */
+.contact-btn::after {
+  content: '';
+  position: absolute;
+  inset: 2px; /* 2px border width */
+  background: linear-gradient(135deg, rgba(20, 5, 40, 0.95), rgba(5, 5, 15, 0.95));
+  border-radius: 10px;
+  z-index: -1;
+}
+
+@keyframes rotateLaser {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.contact-btn:hover {
+  transform: translateY(-8px) scale(1.05);
+  box-shadow: 0 15px 40px rgba(170, 0, 255, 0.6), 0 15px 40px rgba(0, 240, 255, 0.3);
+  color: #fff;
+  text-shadow: 0 0 10px rgba(170, 0, 255, 0.8);
+}
+
+.contact-btn .icon {
+  font-size: 1.5rem;
+}
+
+/* Ensure the long email box doesn't break on small screens */
+.email-btn {
+  width: auto;
+  max-width: 100%;
+}
+
+@media (max-width: 600px) {
+  .email-btn .text {
+    font-size: 0.85rem;
+    white-space: normal;
+    word-break: break-all;
+  }
+}
+
+.portfolio-footer {
+  margin-top: 80px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(0, 240, 255, 0.2);
+  width: 100%;
+  max-width: 800px;
+  text-align: center;
+  font-size: 0.9rem;
+  color: #888;
+}
+
+.timeline-content h3 {
+  font-size: 1.1rem;
+  color: var(--accent-color);
+  margin-bottom: 5px;
+  font-weight: 700;
+  text-shadow: 0 0 10px rgba(0, 240, 255, 0.4);
+}
+
+.timeline-content p {
+  font-size: 0.85rem;
+  color: #ccc;
+  line-height: 1.4;
+  margin: 0;
+  font-weight: 300;
+}
