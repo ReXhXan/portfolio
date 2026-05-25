@@ -35,13 +35,9 @@ const getFrameUrl = (index) => {
 
 // 1. Preloader Function
 function preloadImages() {
-  const progressBar = document.getElementById("progress-bar");
-  const progressText = document.getElementById("progress-text");
-  const preloader = document.getElementById("preloader");
-  
-  let loadedCount = 0;
-
   return new Promise((resolve) => {
+    let resolved = false;
+
     for (let i = 0; i < TOTAL_FRAMES; i++) {
       const img = new Image();
       
@@ -64,31 +60,35 @@ function preloadImages() {
       };
 
       img.onload = () => {
-        loadedCount++;
-        const percent = Math.floor((loadedCount / TOTAL_FRAMES) * 100);
-        progressBar.style.width = `${percent}%`;
-        progressText.innerText = `${percent}%`;
-        if (loadedCount === TOTAL_FRAMES) {
-          // Hide preloader
-          setTimeout(() => {
-            preloader.style.opacity = 0;
-            setTimeout(() => {
-              preloader.style.display = "none";
-              resolve();
-            }, 500);
-          }, 200);
+        // Resolve the promise immediately when the first frame is ready
+        // so the landing page opens instantly. The rest will load in background.
+        if (!resolved && i === 0) {
+          resolved = true;
+          resolve();
         }
       };
 
       img.onerror = () => {
-        // If image not found, load a generated fallback so the preload completes
+        // If image not found, load a generated fallback
         img.src = generateFallback(i);
+        if (!resolved && i === 0) {
+          resolved = true;
+          resolve();
+        }
       };
       
-      // Assign the expected URL. (Ensure images are in public/images/)
+      // Assign the expected URL
       img.src = getFrameUrl(i);
       images.push(img);
     }
+    
+    // Safety fallback: if frame 0 fails to trigger events, resolve anyway after 500ms
+    setTimeout(() => {
+      if (!resolved) {
+        resolved = true;
+        resolve();
+      }
+    }, 500);
   });
 }
 
