@@ -497,3 +497,73 @@ body {
   margin: 0;
   font-weight: 300;
 }
+
+/* =========================================
+   Mobile / Responsive Overrides
+========================================= */
+@media (max-width: 768px) {
+  /* Prevent horizontal scrolling completely */
+  html, body {
+    overflow-x: hidden;
+    width: 100%;
+  }
+
+  /* Make hero text perfectly centered and readable */
+  .hero-text {
+    align-items: center;
+    text-align: center;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+  }
+  
+  .hero-title {
+    font-size: clamp(2.5rem, 10vw, 4rem);
+  }
+
+  /* Optimize Contact section for touch */
+  #contact {
+    padding: 60px 20px;
+  }
+
+  #contact::before {
+    width: 250px;
+    height: 250px;
+  }
+
+  #contact::after {
+    width: 300px;
+    height: 300px;
+  }
+
+  .contact-grid {
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+  }
+
+  .contact-btn {
+    width: 100%;
+    max-width: 350px;
+    padding: 15px 20px;
+    font-size: 1rem;
+    justify-content: center;
+  }
+
+  .email-btn .text {
+    font-size: 0.9rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .skills-container {
+    max-width: 100%;
+    align-items: center;
+  }
+
+  .glowing-box {
+    text-align: center;
+    width: 100%;
+  }
+}

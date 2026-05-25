@@ -129,9 +129,19 @@ function drawImageProp(ctx, img, x, y, w, h, offsetX, offsetY) {
       nh = ih * r,
       cx, cy, cw, ch, ar = 1;
 
-  // decide which gap to fill
-  if (nw < w) ar = w / nw;
-  if (Math.abs(ar - 1) < 1e-14 && nh < h) ar = h / nh;  // updated
+  // decide which gap to fill based on orientation
+  const isPortrait = w < h;
+  
+  if (isPortrait) {
+    // Mobile/Portrait: Fit width perfectly (like object-fit: contain) so it stays sharp.
+    // The background is black, so cinematic top/bottom black bars will blend perfectly.
+    ar = w / nw;
+  } else {
+    // Desktop/Landscape: object-fit: cover
+    if (nw < w) ar = w / nw;
+    if (Math.abs(ar - 1) < 1e-14 && nh < h) ar = h / nh;
+  }
+  
   nw *= ar;
   nh *= ar;
   
