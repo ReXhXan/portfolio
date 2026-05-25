@@ -157,10 +157,25 @@ function renderFrame() {
   
   // Performance Constraint: Only call drawImage if the frame index has changed (or on resize)
   const expectedWidth = window.innerWidth * (window.devicePixelRatio || 1);
+  
   if (frameIndex !== currentRenderedFrame || canvas.width !== expectedWidth) {
-    if (images[frameIndex] && images[frameIndex].complete) {
-      drawImageProp(ctx, images[frameIndex]);
-      currentRenderedFrame = frameIndex;
+    // Smart Lazy Loading: If the exact frame isn't loaded yet, search backwards 
+    // for the closest frame that is fully downloaded to prevent the video from freezing.
+    let targetIndex = frameIndex;
+    let found = false;
+
+    while (targetIndex >= 0 && (frameIndex - targetIndex < 100)) {
+      if (images[targetIndex] && images[targetIndex].complete && images[targetIndex].naturalWidth > 0) {
+        found = true;
+        break;
+      }
+      targetIndex--;
+    }
+    
+    // Only redraw if we found a valid frame, and it's different from the one currently on screen
+    if (found && (targetIndex !== currentRenderedFrame || canvas.width !== expectedWidth)) {
+      drawImageProp(ctx, images[targetIndex]);
+      currentRenderedFrame = targetIndex;
     }
   }
   
