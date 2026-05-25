@@ -7,8 +7,8 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const dirsToProcess = [
-  path.join(__dirname, 'public/images'),
-  path.join(__dirname, 'public/images_work')
+  { src: path.join(__dirname, 'public/images'), dest: path.join(__dirname, 'public/images_opt') },
+  { src: path.join(__dirname, 'public/images_work'), dest: path.join(__dirname, 'public/images_work_opt') }
 ];
 
 async function compressImages() {
@@ -16,34 +16,41 @@ async function compressImages() {
   let totalNewSize = 0;
   let processedCount = 0;
 
-  console.log("Starting aggressive image compression...");
+  console.log("Starting aggressive image compression to new directories...");
 
-  for (const dir of dirsToProcess) {
-    if (!fs.existsSync(dir)) continue;
+  for (const dirObj of dirsToProcess) {
+    if (!fs.existsSync(dirObj.src)) continue;
+    
+    // Create destination directory if it doesn't exist
+    if (!fs.existsSync(dirObj.dest)) {
+      fs.mkdirSync(dirObj.dest, { recursive: true });
+    }
 
-    const files = fs.readdirSync(dir).filter(f => f.endsWith('.webp'));
+    const files = fs.readdirSync(dirObj.src).filter(f => f.endsWith('.webp'));
     
     for (const file of files) {
-      const filePath = path.join(dir, file);
-      const stats = fs.statSync(filePath);
+      const srcPath = path.join(dirObj.src, file);
+      const destPath = path.join(dirObj.dest, file);
+      
+      const stats = fs.statSync(srcPath);
       totalOriginalSize += stats.size;
 
-      const tempPath = filePath + '.tmp';
-      
       try {
-        // Resize to 720p equivalent width and drop quality aggressively
-        await sharp(filePath)
-          .resize({ width: 1280, withoutEnlargement: true })
-          .webp({ quality: 40, effort: 6 }) // Aggressive compression
-          .toFile(tempPath);
-
-        // Replace original with compressed
-        if (fs.existsSync(filePath)) {
-          fs.unlinkSync(filePath);
+        // Skip if already compressed in the destination folder
+        if (fs.existsSync(destPath)) {
+            const destStats = fs.statSync(destPath);
+            totalNewSize += destStats.size;
+            processedCount++;
+            continue;
         }
-        fs.renameSync(tempPath, filePath);
+
+        // Resize and heavily compress into the new destination
+        await sharp(srcPath)
+          .resize({ width: 1280, withoutEnlargement: true })
+          .webp({ quality: 40, effort: 6 }) 
+          .toFile(destPath);
         
-        const newStats = fs.statSync(filePath);
+        const newStats = fs.statSync(destPath);
         totalNewSize += newStats.size;
         processedCount++;
 
@@ -51,8 +58,7 @@ async function compressImages() {
           console.log(`Processed ${processedCount} images...`);
         }
       } catch (err) {
-        console.error(`Error processing ${filePath}:`, err);
-        if (fs.existsSync(tempPath)) fs.unlinkSync(tempPath);
+        console.error(`Error processing ${srcPath}:`, err);
       }
     }
   }
