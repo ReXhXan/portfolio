@@ -44,6 +44,10 @@ body {
   transform: scale(1.05); /* Slightly scale up to crop out the Veo watermark at the edges */
 }
 
+#mobile-bg {
+  display: none;
+}
+
 /* Overlays */
 .overlay-container {
   position: absolute;
@@ -504,14 +508,55 @@ body {
 @media (max-width: 768px) {
 
 
+  /* Hide canvas, show static crisp background */
+  #hero-canvas {
+    display: none !important;
+  }
+
+  #mobile-bg {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-image: url('/images/frame_0001.webp');
+    background-size: cover;
+    background-position: center 20%;
+    z-index: 1;
+  }
+
+  /* Unpin scroll wrapper for natural flow */
+  .scroll-wrapper {
+    height: auto !important;
+    position: relative;
+    z-index: 2;
+  }
+  
+  .overlay-container {
+    position: relative;
+    height: auto;
+  }
+
+  .overlay-element {
+    position: relative;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
   /* Move hero text to the bottom and center it so it doesn't block the robot's face */
   #hero-title {
     align-items: center !important;
     text-align: center !important;
     justify-content: flex-end !important;
-    padding-bottom: 15vh !important;
+    padding-bottom: 5vh !important;
     width: 100%;
     left: 0;
+    opacity: 1 !important;
   }
   
   #hero-title h1 {

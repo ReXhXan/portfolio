@@ -196,6 +196,32 @@ function requestRender() {
 
 // 4. Initialization and GSAP Setup
 async function init() {
+  const isMobile = window.innerWidth <= 768;
+  
+  if (isMobile) {
+    // For mobile devices, bypass heavy preloading and GSAP canvas rendering entirely
+    // so we get a buttery smooth native scroll experience with the static CSS background.
+    console.log("Mobile device detected: using static premium fallback.");
+    
+    // Simple GSAP animations for the natural scroll layout
+    gsap.utils.toArray('.overlay-element').forEach((el) => {
+      // Small fade-in effect on scroll for mobile
+      gsap.from(el, {
+        scrollTrigger: {
+          trigger: el,
+          start: "top 80%",
+          toggleActions: "play none none reverse"
+        },
+        opacity: 0,
+        y: 20,
+        duration: 0.8,
+        ease: "power2.out"
+      });
+    });
+    
+    return;
+  }
+
   // Preload all images
   await preloadImages();
   
