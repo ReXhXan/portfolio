@@ -502,11 +502,7 @@ body {
    Mobile / Responsive Overrides
 ========================================= */
 @media (max-width: 768px) {
-  /* Prevent horizontal scrolling completely */
-  html, body {
-    overflow-x: hidden;
-    width: 100%;
-  }
+
 
   /* Move hero text to the bottom and center it so it doesn't block the robot's face */
   #hero-title {
