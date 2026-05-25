@@ -44,10 +44,9 @@ async function compressImages() {
             continue;
         }
 
-        // Resize and heavily compress into the new destination
+        // Maintain full 1920x1080 resolution, but use high-quality compression
         await sharp(srcPath)
-          .resize({ width: 1280, withoutEnlargement: true })
-          .webp({ quality: 40, effort: 6 }) 
+          .webp({ quality: 80, effort: 6 }) 
           .toFile(destPath);
         
         const newStats = fs.statSync(destPath);
